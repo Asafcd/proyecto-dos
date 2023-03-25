@@ -1,28 +1,31 @@
 import { createContext, ChangeEventHandler } from "react"
 
-export interface EmployeeForm {
-    username: string,
+export interface Employee {
     fullname: string,
-    description: string,
-    position: string,
-    role: number
+    dob: string,
+    position: number,
+    email: string,
+    phone: string,
+    photo: string
 }
 
-export const employeeInitialState: EmployeeForm = {
-    username: '',
+export const employeeInitialState: Employee = {
     fullname: '',
-    description: '',
-    position: '',
-    role: 1
+    dob: '',
+    position: 0,
+    email: '',
+    phone:'',
+    photo:''
 }
 
 export interface EmployeeContextData {
     handleChange: ChangeEventHandler<HTMLInputElement> | null,
-    data: EmployeeForm
+    data: Employee,
+    locked: boolean
 }
 
 
 
-export const EmployeeContext = createContext<EmployeeForm>(employeeInitialState)
+export const EmployeeContext = createContext<Employee>(employeeInitialState)
 
 
