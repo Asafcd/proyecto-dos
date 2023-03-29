@@ -10,6 +10,7 @@ function RolesMenu() {
     return(
         <div>
             <label>Puesto:</label>
+            <br></br>
             <select
                 name='position'
                 value={position}

@@ -97,13 +97,17 @@ function EmployeeForm() {
 
 
     return(
-        <EmployeeContext.Provider value = {contextData}>
-            <div>
+       
+            
+            <EmployeeContext.Provider value = {contextData}>
+            <div className='txt'>
                 <p>{lockMessage}</p>
             </div>
-            
-            <form onSubmit={handleSubmit}>
+            <div className='conteiner'>
+                <div>
+                <form onSubmit={handleSubmit} className='form'>
                 <label> Nombre completo: 
+                    <br></br>
                     <input
                         type='text'
                         name='fullname'
@@ -114,6 +118,7 @@ function EmployeeForm() {
                 </label>
                 <br/>
                 <label> Fecha de nacimiento: 
+                <br></br>
                     <input
                         type='date'
                         name='dob'
@@ -127,6 +132,7 @@ function EmployeeForm() {
 
                 <label>
                     E-mail:
+                    <br></br>
                     <input 
                         required='true'
                         type='email'
@@ -141,20 +147,23 @@ function EmployeeForm() {
                 </label>
                 <br/>
                 <label>Telefono:
+                <br></br>
                     <input
                         type='tel'
                         name='phone'
                         value={phone}
                         onChange={handleChangeLocked}
                         required
-                    /><br/>
+                    />
                     <br />
                     <span style={{ color: "red" }}>{phoneError}</span>
                     
                     
                 </label>
                 <br/>
-                Foro de perfil
+                Foto de perfil
+                <br></br>
+                <div className='file'>
                 <input
                     type='file'
                     accept="image/png, image/gif, image/jpeg"
@@ -163,12 +172,25 @@ function EmployeeForm() {
                     
                     onChange={handleChangeLocked}
                 />
-                <button onClick={lock}>Bloquear tarjeta</button>
-                <button onClick={unlock}>Desbloquear tarjeta</button>
+                </div>
+               
+                <br></br>
+                <br></br>
+                <button className='btnbloquear' onClick={lock}>Bloquear tarjeta</button>
+                <button className='btndesbloq' onClick={unlock}>Desbloquear tarjeta</button>
                 
             </form>
-            <EmployeeCard/>
+                </div>
+                <div>
+                <EmployeeCard/>
+                </div>
+            
+            </div>
+            
+            
         </EmployeeContext.Provider>
+        
+        
     )
 }
 
