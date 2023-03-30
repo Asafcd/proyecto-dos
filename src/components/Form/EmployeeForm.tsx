@@ -5,87 +5,79 @@ import { EmployeeContext, employeeInitialState, Employee, EmployeeContextData } 
 import { authReducer } from '../../import/useReducer.ts'
 import EmployeeCard from '../Card/EmployeeCard.tsx'
 import PositionMenu from './PositionMenu.tsx'
-
-
-
+import {validate } from '../../import/functions.ts'
 
 function EmployeeForm() {
     const [data, handleChange] = useForm<Employee>(employeeInitialState)    
     const {fullname, dob, email, phone, photo, position} = data
 
-    const [finalData, dispatch] = useReducer(authReducer, employeeInitialState)
-    const contextData: EmployeeContextData = { data, handleChange, locked:false }
-    
+    const [returned, dispatch] = useReducer(authReducer, employeeInitialState)
 
-    
     const [phoneError, setPhoneError] = useState<string>('')
     const [emailError, setEmailError] = useState<string>('')
     const [isLocked, setIsLocked] = useState<boolean>(false)
 
-    const validate = () => {
+    const contextData: EmployeeContextData = { data, handleChange, locked: isLocked }
+    
+    
+
+    
+    const unlock = () =>{ 
         let phoneErrorMsg = '';
         let emailErrorMsg = '';
-      
+        
         if (!phone) {
-          phoneErrorMsg = 'El número de teléfono es obligatorio';
+        phoneErrorMsg = 'El número de teléfono es obligatorio';
         } else if (!/^\d{10}$/.test(phone)) {
-          phoneErrorMsg = 'El número de teléfono no es válido';
-        }
-      
+        phoneErrorMsg = 'El número de teléfono no es válido';
+        }else{setIsLocked(false);}
+        setPhoneError(phoneErrorMsg)
         if (!email) {
-          emailErrorMsg = 'La dirección de correo electrónico es obligatoria';
+        emailErrorMsg = 'La dirección de correo electrónico es obligatoria';
         } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-          emailErrorMsg = 'La dirección de correo electrónico no es válida';
-        }
-      
-        setPhoneError(phoneErrorMsg);
-        setEmailError(emailErrorMsg);
-    };
-      
-    
-    const unlock = () =>{
-        const payload = { ...data, locked: false };
-        dispatch({type: 'unlock', payload})
-        setIsLocked(false);
-        
-    }
-    
-    
-    const lock = () => {
+        emailErrorMsg = 'La dirección de correo electrónico no es válida';
+        }else {setIsLocked(false);}
 
-        validate();
-        if (phoneError || emailError || !fullname || !dob || !position ) {
-            
-            return;
-        }
-        dispatch({type: 'lock'})
-        setIsLocked(true); 
+        setEmailError(phoneErrorMsg)
         
+     }
+    const lock = () => { 
+        let phoneErrorMsg = '';
+        let emailErrorMsg = '';
+    
+        if (!phone) {
+        phoneErrorMsg = 'El número de teléfono es obligatorio';
+        } else if (!/^\d{10}$/.test(phone)) {
+        phoneErrorMsg = 'El número de teléfono no es válido';
+        }else{ setIsLocked(true);}
+        setPhoneError(phoneErrorMsg)
+        if (!email) {
+        emailErrorMsg = 'La dirección de correo electrónico es obligatoria';
+        } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+        emailErrorMsg = 'La dirección de correo electrónico no es válida';
+        } else{setIsLocked(true);}
+        setEmailError(phoneErrorMsg)
         
     }
     
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        validate();
-
-        if (phoneError || emailError || !fullname || !dob || !position ) {
+        /* if (phoneError || emailError || !fullname || !dob || !position ) {
+            setIsLocked(false)
             alert("Por favor, complete todos los campos obligatorios y corrija cualquier error.");
             return;
-        }
+        } */
       
         if (!isLocked) {
-          
-          unlock();
-          setIsLocked(false);
+            const payload = { ...data, locked: false };
+            dispatch({type: 'unlock', payload})
         } else {
-          
-            lock();
-            setIsLocked(true);
+            const payload = { ...data, locked: true };
+            
+            dispatch({type: 'lock', payload})
         }
     };
-
-    
 
     const lockMessage = isLocked ? "La tarjeta de empleado se ha generado y ya no puede ser editada." : "La tarjeta de empleado está desbloqueada y se puede editar.";
     
@@ -97,7 +89,6 @@ function EmployeeForm() {
 
 
     return(
-       
             
             <EmployeeContext.Provider value = {contextData}>
             <div className='txt'>
@@ -112,7 +103,7 @@ function EmployeeForm() {
                         type='text'
                         name='fullname'
                         value={fullname}
-                        onChange={handleChangeLocked}
+                        onChange={handleChange}
                         required
                     />
                 </label>
@@ -123,7 +114,7 @@ function EmployeeForm() {
                         type='date'
                         name='dob'
                         value={dob}
-                        onChange={handleChangeLocked}
+                        onChange={handleChange}
                         required
                     />
                 </label>
@@ -138,7 +129,7 @@ function EmployeeForm() {
                         type='email'
                         name='email'
                         value={email}
-                        onChange={handleChangeLocked}
+                        onChange={handleChange}
                         required
                     /> 
                     <br />
@@ -152,7 +143,7 @@ function EmployeeForm() {
                         type='tel'
                         name='phone'
                         value={phone}
-                        onChange={handleChangeLocked}
+                        onChange={handleChange}
                         required
                     />
                     <br />
@@ -170,7 +161,7 @@ function EmployeeForm() {
                     name='photo'
                     
                     
-                    onChange={handleChangeLocked}
+                    onChange={handleChange}
                 />
                 </div>
                

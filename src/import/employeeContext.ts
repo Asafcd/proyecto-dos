@@ -21,7 +21,7 @@ export const employeeInitialState: Employee = {
 export interface EmployeeContextData {
     handleChange: ChangeEventHandler<HTMLInputElement> | null,
     data: Employee,
-    locked: boolean
+    locked: Boolean
 }
 
 

@@ -1,22 +1,25 @@
 //@ts-nocheck
-import {Employee} from './employeeContext.ts'
+import {EmployeeContextData} from './employeeContext.ts'
 
+interface LockState {
+    locked: Boolean
+}
 type AuthAction =
-| { type: 'lock' }
-| { type: 'unlock', payload: Employee }
+| { type: 'lock', payload: LockState }
+| { type: 'unlock', payload: LockState }
 
 
 export const authReducer = (state: Employee, action: AuthAction) => {
     switch(action.type){
         case 'lock':
-            console.log(state)
-            return{
-                ...state,
-                
-            }
+            const { locked } = action.payload
+            console.log(locked)
+            return locked
         case 'unlock':
-            const finalData = action.payload
-            return finalData
+            const unlock = action.payload
+            
+            return unlock.locked
+
         default:
             return state;
     }
