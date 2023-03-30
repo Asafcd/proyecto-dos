@@ -6,15 +6,13 @@ import {Employee,
 } from "../../import/employeeContext.ts";
 
 function EmployeeCard() {
-  const { data, locked} = useContext<EmployeeContextData>(EmployeeContext);
+  const { data, state:{isLocked}} = useContext<EmployeeContextData>(EmployeeContext);
   
   const [employeeInfo, setEmployeeInfo] = useState<Employee>(data)
 
-  const [isLocked, setIsLocked] = useState(locked)
-
   
   const { fullname, dob, position, email, phone, photo } = employeeInfo
-  console.log(locked)
+  console.log(isLocked)
 
   useEffect(() => {
     
@@ -22,7 +20,7 @@ function EmployeeCard() {
       setEmployeeInfo(data)
     }
     
-  },[locked]);
+  },[isLocked, data]);
 
   return (  
     <>

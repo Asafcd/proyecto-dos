@@ -2,81 +2,45 @@
 import React, { FormEvent, FormEventHandler, useReducer, useState , useContext} from 'react'
 import useForm from '../../hooks/useForm.ts'
 import { EmployeeContext, employeeInitialState, Employee, EmployeeContextData } from '../../import/employeeContext.ts'
-import { authReducer } from '../../import/useReducer.ts'
+import { authReducer, LockState } from '../../import/useReducer.ts'
 import EmployeeCard from '../Card/EmployeeCard.tsx'
 import PositionMenu from './PositionMenu.tsx'
-import {validate } from '../../import/functions.ts'
 
 function EmployeeForm() {
     const [data, handleChange] = useForm<Employee>(employeeInitialState)    
     const {fullname, dob, email, phone, photo, position} = data
 
-    const [returned, dispatch] = useReducer(authReducer, employeeInitialState)
+    const lockedState: LockState = { locked: false };
+    const [state, dispatch] = useReducer(authReducer, lockedState)
 
     const [phoneError, setPhoneError] = useState<string>('')
     const [emailError, setEmailError] = useState<string>('')
     const [isLocked, setIsLocked] = useState<boolean>(false)
 
-    const contextData: EmployeeContextData = { data, handleChange, locked: isLocked }
-    
-    
+    const contextData: EmployeeContextData = { data, handleChange, state} 
 
-    
-    const unlock = () =>{ 
-        let phoneErrorMsg = '';
-        let emailErrorMsg = '';
-        
-        if (!phone) {
-        phoneErrorMsg = 'El número de teléfono es obligatorio';
-        } else if (!/^\d{10}$/.test(phone)) {
-        phoneErrorMsg = 'El número de teléfono no es válido';
-        }else{setIsLocked(false);}
-        setPhoneError(phoneErrorMsg)
-        if (!email) {
-        emailErrorMsg = 'La dirección de correo electrónico es obligatoria';
-        } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-        emailErrorMsg = 'La dirección de correo electrónico no es válida';
-        }else {setIsLocked(false);}
-
-        setEmailError(phoneErrorMsg)
-        
-     }
-    const lock = () => { 
-        let phoneErrorMsg = '';
-        let emailErrorMsg = '';
-    
-        if (!phone) {
-        phoneErrorMsg = 'El número de teléfono es obligatorio';
-        } else if (!/^\d{10}$/.test(phone)) {
-        phoneErrorMsg = 'El número de teléfono no es válido';
-        }else{ setIsLocked(true);}
-        setPhoneError(phoneErrorMsg)
-        if (!email) {
-        emailErrorMsg = 'La dirección de correo electrónico es obligatoria';
-        } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-        emailErrorMsg = 'La dirección de correo electrónico no es válida';
-        } else{setIsLocked(true);}
-        setEmailError(phoneErrorMsg)
-        
-    }
     
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        let phoneErrorMsg = '';
+        let emailErrorMsg = '';
+        
+        if (!phone) {
+        phoneErrorMsg = 'El número de teléfono es obligatorio';
+        } else if (!/^\d{10}$/.test(phone)) {
+        phoneErrorMsg = 'El número de teléfono no es válido';
+        }else{ state.isLocked ? setIsLocked(false) : setIsLocked(true);}
 
-        /* if (phoneError || emailError || !fullname || !dob || !position ) {
-            setIsLocked(false)
-            alert("Por favor, complete todos los campos obligatorios y corrija cualquier error.");
-            return;
-        } */
-      
-        if (!isLocked) {
-            const payload = { ...data, locked: false };
-            dispatch({type: 'unlock', payload})
-        } else {
-            const payload = { ...data, locked: true };
-            
-            dispatch({type: 'lock', payload})
-        }
+        setPhoneError(phoneErrorMsg)
+
+        if (!email) {
+        emailErrorMsg = 'La dirección de correo electrónico es obligatoria';
+        } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+        emailErrorMsg = 'La dirección de correo electrónico no es válida';
+        }else {state.isLocked ? setIsLocked(false) : setIsLocked(true);}
+
+        setEmailError(emailErrorMsg)
+        dispatch({type: 'toggle_lock'})
     };
 
     const lockMessage = isLocked ? "La tarjeta de empleado se ha generado y ya no puede ser editada." : "La tarjeta de empleado está desbloqueada y se puede editar.";
@@ -167,8 +131,7 @@ function EmployeeForm() {
                
                 <br></br>
                 <br></br>
-                <button className='btnbloquear' onClick={lock}>Bloquear tarjeta</button>
-                <button className='btndesbloq' onClick={unlock}>Desbloquear tarjeta</button>
+                <button className={state.isLocked ? "btndesbloq" : "btnbloquear"} onClick={handleSubmit}>{state.isLocked ? "Desbloquear" : "Bloquear"}</button>
                 
             </form>
                 </div>
